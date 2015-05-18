@@ -4,7 +4,7 @@
 
 #define TRIGGER_PIN  0  // Arduino pin tied to trigger pin on the ultrasonic sensor.
 #define ECHO_PIN     1  // Arduino pin tied to echo pin on the ultrasonic sensor.
-#define MAX_DISTANCE  300  //400-500 is about the most the sensor can do
+#define MAX_DISTANCE  450  //400-500 is about the most the sensor can do
 uint8_t dataPin  = 2;    // Yellow wire on Adafruit Pixels
 uint8_t clockPin = 3;    // Green wire on Adafruit Pixels
 
@@ -41,11 +41,16 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and
 void setup() {
   strip.begin();
   strip.show();
+  randomSeed(analogRead(7));
 }
 
 
 void loop() {
-  fade(orangered,green,250,50);
+  ants(red,randomColor(),50);    
+  ants(green,randomColor(),50);  
+  ants(blue,randomColor(),50);  
+  ants(black,randomColor(),50);    
+  fade(orangered,randomColor(),250,50);
   spinner(red,green,500,false);
   bulls(red,green,blue,50);
   spiral(black ,dybim, 0, true,50);        
@@ -56,6 +61,7 @@ void loop() {
   unicornSpit(500);
   unicornPoo(500);
 }
+
 
 //BE - fade entire strand from *c1* to *c2* in *steps* increments with *wait* delay.
 int fade(uint32_t c1, uint32_t c2, double steps, int loops)
@@ -117,6 +123,36 @@ int fade(uint32_t c1, uint32_t c2, double steps, int loops)
     uint32_t tmp = c1;
     c1 = c2;
     c2 = tmp;
+  }
+  return 1;
+}
+
+//BE - alternate pods between two colors
+int ants(uint32_t c1, uint32_t c2, int loops){
+  int i,j;
+  for(j=0;j<loops;j++)
+  {
+    for(i=0; i< numLEDs; i++)
+    {
+      if(j%2)
+      {     
+        if(i % 2)
+        {
+          strip.setPixelColor(i,c1);
+        }else{
+          strip.setPixelColor(i,c2);
+        }
+      }else{
+        if((i+1) % 2)
+        {
+          strip.setPixelColor(i,c1);
+        }else{
+          strip.setPixelColor(i,c2);
+        }
+      }
+    }
+    strip.show();
+    delay(ping_it());
   }
   return 1;
 }
@@ -280,19 +316,6 @@ int unicornPoo(int loops)
   return 1;
 }
 
-int ping_it(){
-  int ret_val;
-  ret_val=0;
-  while(ret_val == 0)
-  {  
-    unsigned int uS = sonar.ping(); // Send ping, get ping time in microseconds (uS).
-    ret_val = ((uS / US_ROUNDTRIP_CM));   
-    if(ret_val == 0)
-      delay(20);
-  }
-  return ret_val/2;
-}
-
 // Create a 24 bit color value from R,G,B
 uint32_t Color(byte r, byte g, byte b)
 {
@@ -396,6 +419,18 @@ int setPixelGroup(byte pixels[],byte pixelCount, uint32_t c)
   return 1;
 }
 
+/* Helper functions */
+
+//BE
+uint32_t randomColor()
+{
+  //generate a random color
+  int r = random(0,256);
+  int g = random(0,256);
+  int b = random(0,256);
+  return Color(r,g,b);
+}
+
 
 void all(uint32_t c)
 {
@@ -404,4 +439,17 @@ void all(uint32_t c)
     strip.setPixelColor(i,c);
   }
   strip.show();  
+}
+
+int ping_it(){
+  int ret_val;
+  ret_val=0;
+  while(ret_val == 0)
+  {  
+    unsigned int uS = sonar.ping(); // Send ping, get ping time in microseconds (uS).
+    ret_val = ((uS / US_ROUNDTRIP_CM));   
+    if(ret_val == 0)
+      delay(20);
+  }
+  return ret_val;
 }
