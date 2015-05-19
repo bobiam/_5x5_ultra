@@ -46,6 +46,8 @@ void setup() {
 
 
 void loop() {
+  chase_fill(black,dybim,325,true);
+  primaryBars(500);
   ants(red,randomColor(),50);    
   ants(green,randomColor(),50);  
   ants(blue,randomColor(),50);  
@@ -62,6 +64,53 @@ void loop() {
   unicornPoo(500);
 }
 
+
+int chase_fill(uint32_t bg, uint32_t fg, int loops, bool bounce)
+{
+  //we need to step through numLEdDs+numLEDs-1+numLEDs-2, etc.  Yay for easy formulas.
+  int triangular_number = (numLEDs * (numLEDs + 1)) / 2;
+  all(bg);  
+  for(int l=0;l<loops;l++)
+  {
+    int last = numLEDs;      
+    for(int j=0;j<triangular_number;j++)
+    {
+      for(int i=0;i<last;i++)
+      {
+        if(fg == dybim)
+        {
+          strip.setPixelColor(i,Wheel(i*10));
+        }else{
+          strip.setPixelColor(i,fg);
+        }
+        if(i>0)  
+          strip.setPixelColor(i-1,bg);
+        strip.show();
+        delay(ping_it());
+      }
+      last--;    
+    }
+    last = -1;
+    for(int j=0;j<triangular_number;j++)
+    {
+      for(int i=numLEDs;i>last;i--)
+      {
+        if(fg == dybim)
+        {
+          strip.setPixelColor(i,Wheel(i*10));
+        }else{
+          strip.setPixelColor(i,fg);
+        }
+        if(i<numLEDs)  
+          strip.setPixelColor(i+1,bg);
+        strip.show();
+        delay(ping_it());
+      }
+      last++;    
+    }    
+  }
+  return 1;
+}
 
 //BE - fade entire strand from *c1* to *c2* in *steps* increments with *wait* delay.
 int fade(uint32_t c1, uint32_t c2, double steps, int loops)
@@ -277,6 +326,28 @@ int primaryBars(int loops)
     colors[5] = colors[6];
     colors[6] = temp;
   }
+  for(int h=0;h<loops;h++)
+  {
+    pixel = 0;
+    for(int i=rows;i>-1;i--)
+    {
+      for(int j=0;j<cols;j++)
+      {
+        strip.setPixelColor(pixel,colors[(i)]);
+        pixel++;      
+      }
+      strip.show();
+    }
+    delay(ping_it());
+    uint32_t temp = colors[0];
+    colors[0] = colors[1];
+    colors[1] = colors[2];
+    colors[2] = colors[3];
+    colors[3] = colors[4];
+    colors[4] = colors[5];
+    colors[5] = colors[6];
+    colors[6] = temp;
+  }  
   return 1;
 } 
 
