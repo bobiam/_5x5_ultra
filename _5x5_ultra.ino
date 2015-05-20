@@ -46,25 +46,67 @@ void setup() {
 
 
 void loop() {
-  chase_fill(black,dybim,325,true);
-  primaryBars(500);
-  ants(red,randomColor(),50);    
-  ants(green,randomColor(),50);  
-  ants(blue,randomColor(),50);  
-  ants(black,randomColor(),50);    
-  fade(orangered,randomColor(),250,50);
-  spinner(red,green,500,false);
-  bulls(red,green,blue,50);
-  spiral(black ,dybim, 0, true,50);        
-  meander(black,dybim,true,0,false,50);
-  meander(black,dybim,true,0,true,50);  
-  meander(black,dybim,false,0,true,50);    
-  primaryBars(500);
+  spinner(randomColor(),randomColor(),100,true);
+  unicornPoo(500);    
+  chase_fill(black,dybim,2,true);
+  ants(red,randomColor(),150);    
+  ants(green,randomColor(),150);  
+  ants(blue,randomColor(),150);  
+  ants(black,randomColor(),150);    
+  primaryBars(50);
+  fade(orangered,randomColor(),250,3);
+  spinner(red,green,100,false);
+  randomish(500);
+  bulls(red,green,blue,50);  
+  spiral(black ,dybim, 0, true,5);        
+  meander(black,dybim,true,0,true,5);  
+  meander(black,dybim,false,0,true,5);     
+  primaryBars(100);
+  spiral(red ,dybim, 0, true,1);       
+  spiral(red ,dybim, 0, false,1);         
   unicornSpit(500);
   unicornPoo(500);
+  randomish(random(200,1000));  
+  chase_fill(black,red,1,true);
+  chase_fill(red,blue,1,true);  
+  chase_fill(blue,green,1,true);    
+  randomAnts(100,4);  
+  primaryBars(50);
+  fade(green,blue,250,3);
+  spinner(blue,yellow,150,false);  
+  bulls(red,randomColor(),blue,50);
+  spiral(black ,orangered, 0, true,1);        
+  spiral(orangered ,black, 0, true,1);      
+  meander(black,dybim,true,0,false,1);
+  meander(black,dybim,true,0,true,1);  
+  meander(black,dybim,false,0,true,2);    
+  primaryBars(42);  
+  spiral(black ,dybim, 0, true,1);       
+  spiral(black ,dybim, 0, false,1);         
+  unicornSpit(500);  
 }
 
+int randomAnts(int loops, int times_each)
+{
+  for(int i=0;i<loops;i++)
+    ants(randomColor(),randomColor(),times_each);
+  return 1;
+}
 
+//randomish
+int randomish(int loops)
+{
+  for(int i=0;i<loops;i++)
+  {
+    strip.setPixelColor(random(0,numLEDs),randomColor());
+    strip.show();
+    delay(ping_it());    
+  }
+  return 1;
+}
+
+//send a dot down the strand until it hits the end, then another until it hits the second to last, etc, stacking
+//the colors up as you go.
 int chase_fill(uint32_t bg, uint32_t fg, int loops, bool bounce)
 {
   //we need to step through numLEdDs+numLEDs-1+numLEDs-2, etc.  Yay for easy formulas.
